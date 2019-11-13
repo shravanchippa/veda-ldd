@@ -1,0 +1,15 @@
+Application psuedo code
+
+	int main()
+	{
+		int fd, pid;
+		fd = open("/dev/vDev1", O_RDWR);
+		pid = getpid();
+		ioctl(fd, SENDPID, &pid);
+		while (1)
+		{
+		sigwaitinfo(.....);
+		printf("recvd interrupt");
+		}
+	}
+

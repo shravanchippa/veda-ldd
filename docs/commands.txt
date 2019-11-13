@@ -1,0 +1,20 @@
+mkimage -A arm -O linux -T kernel -C none -a 0x20008000 -e 0x20008000 -n "Modified Kernel 30" -d arch/arm/boot/Image uImage
+
+mkfs.jffs2 --pad=0x4000 --eraseblock=0x4000 -l --root=/root/target_fs -o my_file.bin
+
+setenv bootargs console=ttyS0,115200 root=/dev/nfs nfsroot=192.168.1.24:/mnt ip=192.168.1.1
+setenv bootargs console=ttyS0,115200n8 root=/dev/ram0 rw initrd=0x22000000,4M ramdisk_size=4096
+setenv bootargs console=ttyS0,115200 root=/dev/ram0 rw initrd=0x22000000,4M rootfstype=jffs2 mem=64M
+
+Mounting jffs2
+*************************************************************************************************************
+losetup /dev/loop1 /tftpboot/root_fs_jffs2
+modprobe mtdblock 
+modprobe block2mtd block2mtd=/dev/loop1,131072 (where 131072 is erase block size)
+mount -t jffs2 /dev/mtdblock0 /mnt/
+*************************************************************************************************************
+setenv bootargs console=ttyS0,115200 root=/dev/nfs nfsroot=192.168.1.24:/mnt ip=192.168.1.1
+
+tftp command
+
+/usr/sbin/in.tftpd -l -a 192.168.1.24:69 -c -s /tftpboot/

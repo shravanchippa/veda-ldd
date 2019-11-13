@@ -1,0 +1,65 @@
+network controller ingress event processing
+-------------------------------------------------------------------------------------------------------------
+isr design
+isr()
+     {
+     step 1: allocate buffer 
+     step 2: Transfer packet from device fifos to driver buffer.
+     step 3: process physical header
+     step 4: queue packet for network protocol processing
+    }
+
+
+keypad/keyboard controller driver isr
+
+isr()
+    {
+     step 1: allocate buffer 
+     step 2: read key code from device and tranfer it into buffer
+     step 3: convert keycode to key character as per software character set(ASCII)
+     step 4: transfer key character to application or kernel framework(tty)
+    }
+
+
+
+
+donts
+
+  1. avoid allocating buffers
+  2. avoid data copy between device to buffer using block copy calls
+  3. avoid accessing shared data buffer / structures
+  4. avoid blocking function calls (copy_to_user/ copy_from_user)
+  5. avoid voluntary preemption calls (schedule())
+
+
+do's
+
+  1. use preallocated buffers
+  2. configure dma for data transfers between device and driver buffers
+  3. identify non-critical and deferrable operations and schedule them to run later.
+
+fixed time isr
+
+example 1:
+ isr()
+{
+	schedule_bh(mybh_net);
+}
+
+mybh_net()
+{
+	step 1: process physical header
+        step 2: queue packet for network protocol processing
+}
+example 2:
+
+isr_keypad()
+{
+	1. read keycode
+	2. schedule_bh(mybh_keypad);
+}
+mybh_keypad()
+{
+	1. convert keycode to character code
+ 	2. transfer key character to kernel framework or app
+}

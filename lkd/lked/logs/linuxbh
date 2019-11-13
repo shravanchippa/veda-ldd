@@ -1,0 +1,153 @@
+softirq's usage 
+-------------------------------------------------------------------------------------------------
+1. declare enum entry(kernelsource/include/linux/interrupt.h)
+
+enum
+{
+        HI_SOFTIRQ=0,
+        TIMER_SOFTIRQ,
+        NET_TX_SOFTIRQ,
+        NET_RX_SOFTIRQ,
+        BLOCK_SOFTIRQ,
+        BLOCK_IOPOLL_SOFTIRQ,
+        TASKLET_SOFTIRQ,
+        SCHED_SOFTIRQ,
+        HRTIMER_SOFTIRQ,
+        MYSOFTIRQ,	/* new softirq */
+        RCU_SOFTIRQ,    /* Preferable RCU should always be the last softirq */
+
+        NR_SOFTIRQS
+};
+
+
+2. implement BH function with deferred work and register that as softirq
+
+     open_softirq(MYSOFTIRQ, mybh);
+
+3. schedule softirq for execution
+
+    raise_softirq(MYSOFTIRQ);
+
+
+mybh()
+{
+	/* step1
+	   step2 */
+	raise_softirq(MYSOFTIRQ);
+}
+
+
+
+
+
+
+softirq execution
+
+1. linux maintains per cpu softirq pending counter (32 bit pending counter)
+   raise_softirq function sets appropriate bit of pending counter.
+
+
+do_irq (conceptual flow)
+
+1. Disable local process scheduler
+2. Disable interrupts (on local cpu)
+3. Run Registered ISR's
+4. Enable Interrupts (local cpu) <---- 
+5. Run pending Softirq's
+	do{
+	1. lookup pending bits
+	2. unset pending bits and run corresponding sofitrq bh function
+	3. decrement restart counter 
+        }while(restartcounter > 0)
+6. Enable process Scheduler
+
+conclusion:
+
+1. Softirq's are executed by do_softirq() after ISR's are terminated 
+   with irq lines enabled(interrupt context)
+	
+		or
+
+2. pending softirqs are checked and run also by kernel thread 
+   ksoftirqd/cpuid(process context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ISR Design standard Guidelines
+
+
+1.  Avoid memory allocation
+2.  Avoid user space acccess
+3.  Avoid contention for shared data structures
+4.  Avoid data copy operations
+5.  Avoid Voluntary preemption calls(schedule())
+
+1. Acquire memory form pre-allocated pools
+2. configure DMA transfers 
+3. defer cleanup and non-critical code into deferred routines
+
+
+
+Softirqs
+
+1. Declare softirq index in softirq enum( interrupt.h)
+
+enum(
+	MY_SOFTIRQ,
+    )
+
+2. Register Deferred routine with softirq framework
+
+   open_softirq(MY_SOFTIRQ, myfunc)
+
+3. Schedule Softirq for execution 
+
+      raise_softirq(MY_SOFTIRQ)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

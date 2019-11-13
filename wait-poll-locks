@@ -1,0 +1,69 @@
+
+
+1. mutual exclusion locks
+
+       1. wait locks
+       2. poll locks
+
+ waitlocks: implemented with wait protocol(push caller into wait when lock attempt fails)
+ poll locks: implemented around poll protocol(iterate and try until lock attempt succeeds)
+
+
+2: wait lock interfaces
+
+struct wait_lock 
+{
+	int lock_counter;
+	struct wait_list *next;
+};
+
+int wait_unlock()
+{
+	1. inc lock counter
+	2. wakeup waiters
+	3. return 0
+}
+
+
+3. Poll lock interfaces
+
+struct poll_lock
+{
+	int counter;
+};
+
+int poll_lock()
+{
+	1. dec lock counter
+	2. result val 0 return success
+	3. else increment and try again
+}
+int poll_unlock()
+{
+	1. inc lock counter
+	2. return success
+}
+
+
+
+usage
+
+struct wait_lock mylck;
+
+wait_lock(&mylck);
+/* mutual exclusion code */
+wait_unlock(&mylck);
+
+4. Implementations 
+	-mutex (wait locks)
+	-spinlocks(poll locks)
+
+5. issues 
+	- deadlock detection
+		- Recursive deadlock
+		- Thread Death deadlock
+		- circular deadlock
+	- check Lock validity
+
+
+

@@ -1,0 +1,32 @@
+1. write a "hello linux" kernel module with init and exit routines and execute 
+   following tests
+
+   a) insert module 
+   b) try inserting module with init function returning -1.
+   c) remove init and exit functions and try inserting module
+   d) remove init function and try inserting module
+   e) remove exit function and try inserting module
+   f) try inserting module without MOUDLE_LICENSE macro 
+  
+   verify results for each of the above tests with lsmod and dmesg commands 
+
+2. write a kernel module that exports a function myexport()
+   invoke myexport() function from other module.(dependent module).
+
+   verify following:
+
+   a) observe meta files generated when the first module(exportmod.c) is built. 
+         -- exportmod.mod.c
+         -- Module.symvers
+
+   b) observe meta files of dependent module(depmod.c)
+	 --depmod.mod.c
+
+   c) try build dependent module from a different folder 
+		folder1
+                     -- exportmod.c
+                     -- Makefile
+		folder2
+		     -- depmod.c
+		     -- Makefile
+

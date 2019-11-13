@@ -1,0 +1,15 @@
+
+print statements serve following purposes
+	- user interaction
+	- Error reporting
+	- program flow verification & testing
+	- Debug
+
+Kernel is non-interactive printk designed for
+	- Error reporting
+	- Driver flow verification
+	- Debug	
+
+
+
+	

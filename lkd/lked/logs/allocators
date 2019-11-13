@@ -1,0 +1,60 @@
+1. Page Allocator
+	- Base allocator responsible to manage physical page list.
+	- Rest of the allocators are extensions to page allocator.
+	- sorts page instances as per reserved / free / in-use criteria's
+	- Accepts and processes fresh allocation requests of page size or 
+          multiple of page size.
+	- Always returns start linear address of allocated chunk.
+	- Allocations always are physically contigueos.
+	- fails if it cannot allocate phsically contigueos memory.
+	- handles up-to 8mb requests.
+
+
+
+
+
+
+
+
+
+
+
+2. Slab Allocator
+	- Implemented as extension to page allocator
+	- Handles memory allocations in multiples of 8 bytes
+	  (8,16,32,64,128......upto 128k)
+	- Always returns start linear address of a physically contigueos chunk
+	- fails if it cannot find physically contigueos chunk to process an
+	  allocation request.
+
+
+
+   
+3. cache Allocator
+	- Built on top of slab allocator
+	- Allows kernel services to create pre-allocated memory caches
+	- Allows allocation of memory/object pools
+	- Always serves physically contigueos memory.
+	- returns start linear address of allocated memory/object
+
+       Data-structers:
+			struct kmem_cache_t
+			struct dma_pool_t
+   key routines:				
+
+		kmem_cache_create()
+		kmem_cache_alloc()
+		kmem_cache_free()
+		kmem_cache_destory()
+		dma_pool_create()
+		dma_pool_alloc()
+		dma_pool_free()
+		dma_pool_destroy()
+
+4. Fragment Allocator
+	- Built on top of page allocator
+	- handles memory allocation requests of random sizes
+	- returns virtually contiguos memory by joining fragments left over in pages
+	- returns start linear address of virtually contigueos chunk
+
+

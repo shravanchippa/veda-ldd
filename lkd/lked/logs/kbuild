@@ -1,0 +1,28 @@
+
+1. Kernel build
+
+
+step 1: assign unique build name
+	Assgin unique string to EXTRA_VERSION macro of top makefile
+	
+step 2: choose kernel configuration
+
+step 3: initiate build
+
+	#make
+
+		1. open .config
+		2. indentify and step into appropriate branch
+		3. run kbuild make script
+		4. create vmlinux image
+		5. invoke arch Makefile to generate loadable image
+
+
+
+step 4: install module images onto root file system
+		/lib/modules/($SHELL uname -r)
+	#make modules_install 
+
+step 5: Configure boot loader with new kernel entry
+
+	#make install 
